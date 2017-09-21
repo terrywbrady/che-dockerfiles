@@ -49,5 +49,5 @@ RUN sudo mkdir -p "$PGDATA" && sudo chown -R postgres:postgres "$PGDATA" && sudo
 VOLUME /var/lib/postgresql/data
 CMD sudo pg_createcluster 9.5 main --start && sudo service postgresql start & tail -f /dev/null
 
-RUN sudo -u postgres psql -c 'create user user'
+RUN sudo -u postgres createuser user
 RUN sudo -u postgres psql -c 'create database dspace'
