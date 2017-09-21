@@ -31,7 +31,9 @@ ENV PG_MAJOR 9.5
 ENV PG_VERSION 9.5.2-1
 
 RUN sudo echo 'deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main' $PG_MAJOR > /etc/apt/sources.list.d/pgdg.list
+
 USER user
+
 RUN sudo apt-get update \
     && sudo apt-get install -y postgresql-common \
     && sudo sed -ri 's/#(create_main_cluster) .*$/\1 = false/' /etc/postgresql-common/createcluster.conf \
@@ -43,11 +45,11 @@ RUN sudo mv -v /usr/share/postgresql/$PG_MAJOR/postgresql.conf.sample /usr/share
     && sudo ln -sv ../postgresql.conf.sample /usr/share/postgresql/$PG_MAJOR/ \
     && sudo sed -ri "s!^#?(listen_addresses)\s*=\s*\S+.*!\1 = '*'!" /usr/share/postgresql/postgresql.conf.sample
 RUN sudo mkdir -p /var/run/postgresql && sudo chown -R postgres:postgres /var/run/postgresql && sudo chmod g+s /var/run/postgresql
+
 ENV PATH /usr/lib/postgresql/$PG_MAJOR/bin:$PATH
 ENV PGDATA /var/lib/postgresql/data
 RUN sudo mkdir -p "$PGDATA" && sudo chown -R postgres:postgres "$PGDATA" && sudo chmod 777 "$PGDATA"
 VOLUME /var/lib/postgresql/data
-CMD sudo pg_createcluster 9.5 main --start && sudo service postgresql start & tail -f /dev/null
 
-RUN sudo -u postgres createuser user
-RUN sudo -u postgres psql -c 'create database dspace'
+CMD sudo pg_createcluster $PG_MAJOR main --start && sudo service postgresql start & tail -f /dev/null
+
