@@ -31,7 +31,7 @@ ENV PG_MAJOR 9.5
 ENV PG_VERSION 9.5.2-1
 
 RUN sudo echo 'deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main' $PG_MAJOR > /etc/apt/sources.list.d/pgdg.list
-USER dspace
+USER user
 RUN sudo apt-get update \
     && sudo apt-get install -y postgresql-common \
     && sudo sed -ri 's/#(create_main_cluster) .*$/\1 = false/' /etc/postgresql-common/createcluster.conf \
@@ -49,5 +49,5 @@ RUN sudo mkdir -p "$PGDATA" && sudo chown -R postgres:postgres "$PGDATA" && sudo
 VOLUME /var/lib/postgresql/data
 CMD sudo pg_createcluster 9.5 main --start && sudo service postgresql start & tail -f /dev/null
 
-RUN sudo -u postgres psql -c 'create user dspace'
+RUN sudo -u postgres psql -c 'create user user'
 RUN sudo -u postgres psql -c 'create database dspace'
